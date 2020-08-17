@@ -94,6 +94,14 @@ function Install-Codespaces{
             Write-Host "Expanding"
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
+
+            $a = ls
+            $b = ls .\bin
+
+            Write-Host "$a"
+            Write-Host "$b"
+            Write-Host "###########################"
+
             break
         }
     }
