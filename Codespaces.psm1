@@ -21,6 +21,10 @@ function Start-Codespaces {
     $csJob = Start-Job -ScriptBlock {
         $subscription = $using:Subscription
         $plan = $using:Plan
+        $a = ls
+        $b = ls bin
+        Write-Host "a"
+        Write-Host "b"
         "n`n1`n`n" | & ./bin/codespaces.exe start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
