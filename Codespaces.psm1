@@ -9,6 +9,8 @@ function Start-Codespaces {
         [switch]$NoWait
 
     )
+    $loc = pwd
+    Write-Host "current dir in start-codespaces $loc"
 
     Install-Codespaces
 
@@ -23,8 +25,8 @@ function Start-Codespaces {
         $plan = $using:Plan
         $a = ls
         $b = ls bin
-        Write-Host "a"
-        Write-Host "b"
+        Write-Host "$a"
+        Write-Host "$b"
         "n`n1`n`n" | & ./bin/codespaces.exe start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
@@ -58,6 +60,9 @@ function Start-Codespaces {
 }
 
 function Install-Codespaces{
+    $loc = pwd
+    Write-Host "current dir in install-codespaces $loc"
+
     $global:ProgressPreference = "SilentlyContinue"
     Set-StrictMode -Version Latest
     $ErrorActionPreference = "Stop"
