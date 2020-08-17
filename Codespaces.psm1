@@ -64,26 +64,26 @@ function Install-Codespaces{
     $tempdestination = New-TemporaryFile
     $webClient = New-Object System.Net.WebClient
     switch ($true) {
-        $IsMacOS {
-            Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3920504.zip";
+        # $IsMacOS {
+        #     Import-Module -Name "Microsoft.PowerShell.Archive"
+        #     $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3920504.zip";
 
-            Write-Host "Downloading"
-            $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Expanding"
+        #     Write-Host "Downloading"
+        #     $WebClient.DownloadFile($source, $tempdestination)
+        #     Write-Host "Expanding"
 
-            Expand-Archive -Path $tempdestination -Destination $destination -Force
-            chmod -R +x ./bin
-            break
-        }
-        $IsLinux {
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3929085.tar.gz"
-            Write-Host "Downloading"
-            $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Expanding"
-            tar -xf $tempdestination -C $destination
-            break
-        }
+        #     Expand-Archive -Path $tempdestination -Destination $destination -Force
+        #     chmod -R +x ./bin
+        #     break
+        # }
+        # $IsLinux {
+        #     $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3929085.tar.gz"
+        #     Write-Host "Downloading"
+        #     $WebClient.DownloadFile($source, $tempdestination)
+        #     Write-Host "Expanding"
+        #     tar -xf $tempdestination -C $destination
+        #     break
+        # }
         Default {
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
