@@ -26,6 +26,7 @@ function Start-Codespaces {
 
     $env:VSCS_ARM_TOKEN=$ArmToken
 
+    Write-Host "Starting job to start codespaces session"
     $csJob = Start-Job -ScriptBlock {
         $subscription = $using:Subscription
         $plan = $using:Plan
