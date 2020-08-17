@@ -12,13 +12,6 @@ function Start-Codespaces {
 
     Install-Codespaces
 
-    Write-Host "@@###########################"
-
-    $a = ls .\bin\
-
-    Write-Host "$a"
-    Write-Host "$b"
-    Write-Host "###########################"
 
     Write-Host "Setting arm token"
     $env:VSCS_ARM_TOKEN=$ArmToken
@@ -28,7 +21,7 @@ function Start-Codespaces {
     $csJob = Start-Job -ScriptBlock {
         $subscription = $using:Subscription
         $plan = $using:Plan
-        "n`n1`n`n" | ./bin/codespaces start -s $subscription -p $plan
+        "n`n1`n`n" | & ./bin/codespaces.exe start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
 
@@ -102,12 +95,6 @@ function Install-Codespaces{
             Write-Host "Expanding"
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
-
-            $a = ls .\bin
-
-            Write-Host "$a"
-            Write-Host "$b"
-            Write-Host "###########################"
 
             break
         }
