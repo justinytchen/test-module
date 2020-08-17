@@ -49,12 +49,6 @@ function Start-Codespaces {
             Write-Host $output
             sleep 3
         };
-
-        while (-not (get-runspace -id 1).debugger.IsActive) {
-
-            Write-Host $output
-            sleep 3
-        };
     }
 }
 

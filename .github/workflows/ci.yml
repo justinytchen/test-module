@@ -17,15 +17,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [windows-latest]
+        # os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v1
     - name: Install Pester
-      shell: pwsh
+      shell: powershell
       run: Install-Module Pester -Force -MaximumVersion 4.999.999
     - name: Invoke Pester
-      shell: pwsh
+      shell: powershell
       run: |
         Write-Host $pid
         Import-Module ./Codespaces.psm1
