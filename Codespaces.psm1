@@ -12,7 +12,17 @@ function Start-Codespaces {
     )
 
     $curLoc = Get-Location
-    Install-Codespaces $curLoc "codespacesBin"
+    $binFolderName = "codespacesBin"
+    Install-Codespaces $curLoc $binFolderName
+
+    Write-Host "Looking for active sessions to stop"
+    Try {
+        & (Join-Path $curLoc $binFolderName "codespaces") stop
+        Write-Host "Stopped a previously active session"
+    }
+    Catch {
+        Write-Host "No active sessions"
+    }
 
     $env:VSCS_ARM_TOKEN=$ArmToken
 
@@ -20,7 +30,9 @@ function Start-Codespaces {
         $subscription = $using:Subscription
         $plan = $using:Plan
         $resourceGroup = $using:ResourceGroup
-        "n`n`n" | ./bin/codespaces start -s $subscription -p $plan -r $resourceGroup
+        $curLoc = $using:curLoc
+        $binFolderName = $using:binFolderName
+        "n`n`n" | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan -r $resourceGroup
         $env:VSCS_ARM_TOKEN=""
     }
 
@@ -43,7 +55,7 @@ function Start-Codespaces {
         while (-not (get-runspace -id 1).debugger.IsActive) {
 
             Write-Host $output
-            sleep 3
+            Start-Sleep 3
         };
     }
 }
@@ -63,7 +75,10 @@ function Install-Codespaces{
 
     if ($null -ne (Get-Process -Name "vsls-agent" -ea "SilentlyContinue")){
         Write-Host "Ending vsls-agent that was still active from a previous session"
-        Stop-Process -Name "vsls-agent"
+        $id = (Get-Process -Name "vsls-agent").Id
+        Stop-Process -Id $id
+        Wait-Process -Id $id
+        Start-Sleep 3
     }
 
     if(Test-Path $BinFolderName){
