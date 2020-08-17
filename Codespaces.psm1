@@ -12,6 +12,15 @@ function Start-Codespaces {
 
     Install-Codespaces
 
+    Write-Host "@@###########################"
+
+    $a = ls .\bin\codespaces
+    $b = ls .\bin\codespaces.exe
+
+    Write-Host "$a"
+    Write-Host "$b"
+    Write-Host "###########################"
+
     Write-Host "Setting arm token"
     $env:VSCS_ARM_TOKEN=$ArmToken
 
@@ -95,8 +104,8 @@ function Install-Codespaces{
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
 
-            $a = ls
-            $b = ls .\bin
+            $a = ls .\bin\codespaces
+            $b = ls .\bin\codespaces.exe
 
             Write-Host "$a"
             Write-Host "$b"
