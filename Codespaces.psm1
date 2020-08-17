@@ -21,6 +21,8 @@ function Start-Codespaces {
     Write-Host "Starting codespaces"
 
     $csJob = Start-Job -ScriptBlock {
+        $loc = pwd
+        Write-Host "current dir in start-codespaces new job $loc"
         $subscription = $using:Subscription
         $plan = $using:Plan
         $a = ls
