@@ -21,15 +21,13 @@ function Start-Codespaces {
     Write-Host "Starting codespaces"
 
     $csJob = Start-Job -ScriptBlock {
-        $loc = pwd
-        Write-Host "current dir in start-codespaces new job $loc"
         $subscription = $using:Subscription
         $plan = $using:Plan
         $a = ls
         $b = ls bin
         Write-Host "$a"
         Write-Host "$b"
-        "n`n1`n`n" | & ./bin/codespaces.exe start -s $subscription -p $plan
+        "n`n1`n`n" | & (Join-Path $loc "bin" "codespaces") start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
 
