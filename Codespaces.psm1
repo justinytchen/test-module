@@ -14,8 +14,7 @@ function Start-Codespaces {
 
     Write-Host "@@###########################"
 
-    $a = ls .\bin\codespaces
-    $b = ls .\bin\codespaces.exe
+    $a = ls .\bin\
 
     Write-Host "$a"
     Write-Host "$b"
@@ -104,8 +103,7 @@ function Install-Codespaces{
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
 
-            $a = ls .\bin\codespaces
-            $b = ls .\bin\codespaces.exe
+            $a = ls .\bin
 
             Write-Host "$a"
             Write-Host "$b"
