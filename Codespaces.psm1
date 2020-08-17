@@ -61,7 +61,7 @@ function Install-Codespaces{
     New-Item -Path . -Name "bin" -ItemType "directory"
 
     $destination="./bin"
-    $tempdestination = New-TemporaryFile
+    $tempdestination = "tmp.zip"
     $webClient = New-Object System.Net.WebClient
     switch ($true) {
         # $IsMacOS {
