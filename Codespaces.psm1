@@ -9,8 +9,8 @@ function Start-Codespaces {
         [switch]$NoWait
 
     )
-    $loc = pwd
-    Write-Host "current dir in start-codespaces $loc"
+    $Loc = pwd
+    Write-Host "current dir in start-codespaces $Loc"
 
     Install-Codespaces
 
@@ -23,6 +23,7 @@ function Start-Codespaces {
     $csJob = Start-Job -ScriptBlock {
         $subscription = $using:Subscription
         $plan = $using:Plan
+        $loc = $using:Loc
         Write-Host "$loc"
         $t = (Join-Path $loc "bin" "codespaces")
         Write-Host "$t"
