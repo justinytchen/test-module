@@ -28,6 +28,7 @@ function Start-Codespaces {
         $t = (Join-Path $loc "bin")
         Write-Host "$t"
 
+        Set-Location $loc
         "n`n1`n`n" | & (Join-Path $t "codespaces") start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
