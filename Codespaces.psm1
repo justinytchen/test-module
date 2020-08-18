@@ -40,13 +40,14 @@ function Start-Codespaces {
 
     while ($true) {
         $output = Receive-Job $csJob
+        Write-Host $output
         if($output.length -gt 0){
             if($output -match '\[!ERROR\]'){
-                Write-Host $output
+                # Write-Host $output
                 return;
             }
             if($output -match 'online.visualstudio.com'){
-                Write-Host $output
+                # Write-Host $output
                 break;
             }
         }
