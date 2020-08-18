@@ -33,8 +33,8 @@ function Start-Codespaces {
         $resourceGroup = $using:ResourceGroup
         $curLoc = $using:curLoc
         $binFolderName = $using:binFolderName
-        "n`n`n" | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan -r $resourceGroup
-        # "n`n1`n`n" | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan
+        # "n`n`n" | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan -r $resourceGroup
+        "n`n1`n`n" | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan
         $env:VSCS_ARM_TOKEN=""
     }
 
