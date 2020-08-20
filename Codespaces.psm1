@@ -140,6 +140,10 @@ function Install-Codespaces{
             $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3958053.tar.gz"
             Write-Host "$(Get-TimeStamp) Downloading tar.gz file (Linux)"
             $WebClient.DownloadFile($source, $tempdestination)
+
+            $a = pwd
+            Write-Host "$a"
+            $tempdestination = "VSOAgent_linux_3997490.tar.gz"
             Write-Host "$(Get-TimeStamp) Extracting from tar.gz file"
             tar -xf $tempdestination -C $destination
             break
