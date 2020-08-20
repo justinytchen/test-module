@@ -1,3 +1,6 @@
+$script:tempDir = [System.IO.Path]::GetTempPath()
+$script:codespacesLoc = [System.IO.Path]::Combine($script:tempDir, "codespaces", "bin", "codespaces")
+
 function Start-Codespaces {
     param(
         [Parameter(Position=0, Mandatory)]
@@ -10,69 +13,75 @@ function Start-Codespaces {
         [string]$ArmToken,
         [Parameter(Position=4)]
         [string]$SessionName,
-        [switch]$NoWait
+        [switch]$Wait
     )
 
-    $curLoc = Get-Location
-    $binFolderName = "codespacesBin"
-    Install-Codespaces $curLoc $binFolderName
+    Write-Host "$(Get-TimeStamp) Stop any active Codespaces instances"
+    Stop-Codespaces $ArmToken
 
-    Write-Host "Looking for active sessions to stop"
-    Try {
-        & (Join-Path $curLoc $binFolderName "codespaces") stop
-        Write-Host "Stopped a previously active session"
-    }
-    Catch {
-        Write-Host "No active sessions"
-    }
+    Install-Codespaces $script:tempDir
 
     $env:VSCS_ARM_TOKEN=$ArmToken
 
-    Write-Host "Starting job to start codespaces session"
+    Write-Host "$(Get-TimeStamp) Starting codespaces session"
+    $curDir = Get-Location
     $csJob = Start-Job -ScriptBlock {
+        Set-Location $using:curDir
+        $codespacesExec = $using:codespacesLoc
         $subscription = $using:Subscription
         $plan = $using:Plan
         $resourceGroup = $using:ResourceGroup
-        $curLoc = $using:curLoc
-        $binFolderName = $using:binFolderName
         $sessionName = $using:SessionName
-        ("n`n" + $sessionName + "`n") | & (Join-Path $curLoc $binFolderName "codespaces") start -s $subscription -p $plan -r $resourceGroup
-        $env:VSCS_ARM_TOKEN=""
+        ("n`n" + $sessionName + "`n") | & $script:codespacesExec start -s $subscription -p $plan -r $resourceGroup
     }
 
     while ($true) {
         $output = Receive-Job $csJob
         if($output.length -gt 0){
-            Write-Host $output
-        }
-        if($output.length -gt 0){
             if($output -match '\[!ERROR\]'){
-                # Write-Host $output
+                Write-Host $output
                 return;
             }
             if($output -match 'online.visualstudio.com'){
-                # Write-Host $output
+                $url = $output.substring($output.IndexOf("https"))
+                Write-Host "$(Get-TimeStamp) Connect: $url"
                 break;
             }
         }
     }
 
-    if (-not $NoWait) {
-        Write-Host "Waiting for debugger to attach"
+    if ($Wait) {
+        Write-Host "$(Get-TimeStamp) Waiting for debugger to attach"
         while (-not (get-runspace -id 1).debugger.IsActive) {
 
-            Write-Host $output
+            Write-Host "$(Get-TimeStamp) Connect: $url"
             Start-Sleep 3
         };
+    }
+}
+
+function Stop-Codespaces{
+    param(
+        [Parameter(Position=0, Mandatory)]
+        [string]$ArmToken
+    )
+    $env:VSCS_ARM_TOKEN=$ArmToken
+    $codespacesBin = [System.IO.Path]::Combine($script:tempDir, "codespaces", "bin")
+    if(Test-Path $codespacesBin){
+        $output = & $script:codespacesLoc stop
+        if($output -match "!ERROR"){
+            Write-Host "$(Get-TimeStamp) No active Codespaces session found"
+        }
+        else{
+            Write-Host "$(Get-TimeStamp) Removed previously active Codespaces session."
+        }
     }
 }
 
 function Install-Codespaces{
     param(
         [Parameter(Position=0, Mandatory)]
-        [string]$BinParentDir,
-        [Parameter(Position=1, Mandatory)]
-        [string]$BinFolderName
+        [string]$BinParentDir
     )
 
     $global:ProgressPreference = "SilentlyContinue"
@@ -81,22 +90,22 @@ function Install-Codespaces{
     $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
 
     if ($null -ne (Get-Process -Name "vsls-agent" -ea "SilentlyContinue")){
-        Write-Host "Ending vsls-agent that was still active from a previous session"
+        Write-Host "$(Get-TimeStamp) Ending vsls-agent that was still active from a previous session"
         $id = (Get-Process -Name "vsls-agent").Id
         Stop-Process -Id $id
         Wait-Process -Id $id
         Start-Sleep 3
     }
 
-    if(Test-Path $BinFolderName){
-        Write-Host "$BinFolderName folder already exists. Deleting and reinstalling."
-        Remove-Item $BinFolderName -force -recurse
+    if(Test-Path (Join-Path $BinParentDir "codespaces")){
+        Write-Host "$(Get-TimeStamp) Codespaces folder already exists at $BinParentDir. Deleting and reinstalling."
+        Remove-Item (Join-Path $BinParentDir "codespaces") -force -recurse
     }
 
-    New-Item -Path $BinParentDir -Name $BinFolderName -ItemType "directory"
+    New-Item -Path $BinParentDir -Name "codespaces" -ItemType "directory" | Out-Null
+    New-Item -Path (Join-Path $BinParentDir "codespaces") -Name "bin" -ItemType "directory" | Out-Null
 
-    $destination = Join-Path $BinParentDir $BinFolderName
-    $tempdestination = New-TemporaryFile
+    $destination = [System.IO.Path]::Combine($BinParentDir, "codespaces", "bin")
     $webClient = New-Object System.Net.WebClient
     switch ($true) {
         ($PSVersionTable.PSVersion.Major -lt 6) {
@@ -104,41 +113,45 @@ function Install-Codespaces{
             Import-Module -Name "Microsoft.PowerShell.Archive"
             $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3934786.zip"
 
-            Write-Host "Downloading zip file (Windows)"
+            $tempdestination = New-Item "codespaces.zip"
+            Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Extracting from zip file"
+            Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
         }
         $IsMacOS {
+            $tempdestination = New-TemporaryFile
             Import-Module -Name "Microsoft.PowerShell.Archive"
             $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3920504.zip";
 
-            Write-Host "Downloading zip file (MacOS)"
+            Write-Host "$(Get-TimeStamp) Downloading zip file (MacOS)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Extracting from zip file"
+            Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             chmod -R +x ./bin
             break
         }
         $IsLinux {
+            $tempdestination = New-TemporaryFile
             $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3929085.tar.gz"
-            Write-Host "Downloading tar.gz file (Linux)"
+            Write-Host "$(Get-TimeStamp) Downloading tar.gz file (Linux)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Extracting from tar.gz file"
+            Write-Host "$(Get-TimeStamp) Extracting from tar.gz file"
             tar -xf $tempdestination -C $destination
             break
         }
         Default {
+            $tempdestination = New-TemporaryFile
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
             $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3934786.zip"
 
-            Write-Host "Downloading zip file (Windows)"
+            Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "Extracting from zip file"
+            Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
@@ -146,5 +159,9 @@ function Install-Codespaces{
     }
 
     Remove-Item $tempdestination
-    Write-Host "Done installing codespaces"
+    Write-Host "$(Get-TimeStamp) Done installing codespaces"
+}
+
+function Get-TimeStamp {
+    return "[{0:MM/dd/yy} {0:HH:mm:ss}]" -f (Get-Date)
 }
