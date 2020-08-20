@@ -137,7 +137,7 @@ function Install-Codespaces{
             $tempdestination = "VSOAgent_osx_3997490.zip"
             Write-Host "$(Get-TimeStamp) Extracting from zip file"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
-            chmod -R +x ./bin
+            chmod -R +x [System.IO.Path]::Combine($script:tempDir, "codespaces", "bin")
             break
         }
         $IsLinux {
