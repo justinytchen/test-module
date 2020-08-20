@@ -117,8 +117,11 @@ function Install-Codespaces{
             $tempdestination = New-Item "codespaces.zip"
             Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
+
+            # TEMP FIX
+            $tempdestination = "VSOAgent_win_3997490.zip"
+            Write-Host "$(Get-TimeStamp) Extracting from zip file"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
         }
@@ -129,8 +132,10 @@ function Install-Codespaces{
 
             Write-Host "$(Get-TimeStamp) Downloading zip file (MacOS)"
             $WebClient.DownloadFile($source, $tempdestination)
-            Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
+            # TEMP FIX
+            $tempdestination = "VSOAgent_osx_3997490.zip"
+            Write-Host "$(Get-TimeStamp) Extracting from zip file"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             chmod -R +x ./bin
             break
@@ -141,8 +146,7 @@ function Install-Codespaces{
             Write-Host "$(Get-TimeStamp) Downloading tar.gz file (Linux)"
             $WebClient.DownloadFile($source, $tempdestination)
 
-            $a = pwd
-            Write-Host "$a"
+            # TEMP FIX
             $tempdestination = "VSOAgent_linux_3997490.tar.gz"
             Write-Host "$(Get-TimeStamp) Extracting from tar.gz file"
             tar -xf $tempdestination -C $destination
@@ -158,6 +162,8 @@ function Install-Codespaces{
             $WebClient.DownloadFile($source, $tempdestination)
             Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
+            # TEMP FIX
+            $tempdestination = "VSOAgent_win_3997490.zip"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
         }
