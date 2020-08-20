@@ -15,9 +15,15 @@ steps:
   displayName: 'Run a one-line script'
 - pwsh: |
     Install-Module Pester -Force -MaximumVersion 4.999.999
+
 - pwsh: |
     Write-Host $pid
     Import-Module ./Codespaces.psm1
-    Start-Codespaces -Subscription $env:SUBSCRIPTION_ID -ResourceGroup $env:secrets.RESOURCE_GROUP -Plan $env:secrets.PLAN_ID -ArmToken $env:secrets.ARM_TOKEN
+    Start-Codespaces -Subscription "$(sub)" -ResourceGroup "$(res)" -Plan "$(plan)" -ArmToken "$(arm)"
     Invoke-Pester test -EnableExit
     ./TestFile.ps1
+  env:
+    sub: $(SUBSCRIPTION_ID)
+    res: $(RESOURCE_GROUP)
+    plan: $(PLAN_ID)
+    arm: $(ARM_TOKEN)
