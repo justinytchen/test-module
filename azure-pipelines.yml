@@ -19,7 +19,7 @@ steps:
 - pwsh: |
     Write-Host $pid
     Import-Module ./Codespaces.psm1
-    Start-Codespaces -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm
+    Start-Codespaces -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm TestFromAzurePipelines
     Invoke-Pester test -EnableExit
     ./TestFile.ps1
   env:
