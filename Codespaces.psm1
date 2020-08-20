@@ -112,7 +112,7 @@ function Install-Codespaces{
         ($PSVersionTable.PSVersion.Major -lt 6) {
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3934786.zip"
+            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
 
             $tempdestination = New-Item "codespaces.zip"
             Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
@@ -125,7 +125,7 @@ function Install-Codespaces{
         $IsMacOS {
             $tempdestination = New-TemporaryFile
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3920504.zip";
+            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3958053.zip";
 
             Write-Host "$(Get-TimeStamp) Downloading zip file (MacOS)"
             $WebClient.DownloadFile($source, $tempdestination)
@@ -137,7 +137,7 @@ function Install-Codespaces{
         }
         $IsLinux {
             $tempdestination = New-TemporaryFile
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3929085.tar.gz"
+            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3958053.tar.gz"
             Write-Host "$(Get-TimeStamp) Downloading tar.gz file (Linux)"
             $WebClient.DownloadFile($source, $tempdestination)
             Write-Host "$(Get-TimeStamp) Extracting from tar.gz file"
@@ -148,7 +148,7 @@ function Install-Codespaces{
             $tempdestination = New-TemporaryFile
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3934786.zip"
+            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
 
             Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
