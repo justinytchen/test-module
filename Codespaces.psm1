@@ -38,6 +38,7 @@ function Start-Codespaces {
     while ($true) {
         $output = Receive-Job $csJob
         if($output.length -gt 0){
+            Write-Host $output
             if($output -match '\[!ERROR\]'){
                 Write-Host $output
                 return;

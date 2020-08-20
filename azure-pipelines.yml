@@ -5,7 +5,6 @@
 
 pr:
 - master
-- working
 
 pool:
   vmImage: 'ubuntu-latest'
