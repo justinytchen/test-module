@@ -37,6 +37,7 @@ function Start-Codespaces {
     while ($true) {
         $output = Receive-Job $csJob
         if($output.length -gt 0){
+            Write-Host $output
             if($output -match '\[!ERROR\]'){
                 Write-Host $output
                 return;
@@ -54,7 +55,7 @@ function Start-Codespaces {
     Write-Host $pid
     if (-not $NoWait) {
         while (-not $host.Runspace.debugger.IsActive) {
-            Write-Host $output
+            Write-Host "$pid $output"
             sleep 3
         };
     }
