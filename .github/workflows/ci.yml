@@ -29,8 +29,9 @@ jobs:
       shell: pwsh
       run: |
         Write-Host $pid
-        Import-Module ./Codespaces.psm1
+        Import-Module ./Codespaces.psm1 -Force
         Start-Codespaces '${{ secrets.SUBSCRIPTION_ID }}' '${{ secrets.RESOURCE_GROUP }}' '${{ secrets.PLAN_ID }}' '${{ secrets.ARM_TOKEN }}' -Wait
+        Wait-Debugger
         Invoke-Pester test -EnableExit
         ./TestFile.ps1
     - uses: actions/upload-artifact@master
