@@ -38,14 +38,13 @@ function Start-Codespaces {
     while ($true) {
         $output = Receive-Job $csJob
         if($output.length -gt 0){
-            Write-Host $output
             if($output -match '\[!ERROR\]'){
                 Write-Host $output
                 return;
             }
             if($output -match 'online.visualstudio.com'){
                 $url = $output.substring($output.IndexOf("https"))
-                Write-Host "$(Get-TimeStamp) Connect: $url"
+                Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
                 break;
             }
         }
