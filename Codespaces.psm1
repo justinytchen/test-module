@@ -54,7 +54,7 @@ function Start-Codespaces {
         Write-Host "$(Get-TimeStamp) Waiting for debugger to attach"
         while (-not (get-runspace -id 1).debugger.IsActive) {
 
-            Write-Host "$(Get-TimeStamp) Connect: $url"
+            Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
             Start-Sleep 3
         };
     }
