@@ -23,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: agdf
-      shell: powershell
+      shell: pwsh
       run: |
         Import-Module ./codespaces.psm1 -Force
         Start-Codespaces -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -ResourceGroup '${{ secrets.RESOURCE_GROUP }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}' -Wait

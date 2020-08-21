@@ -162,7 +162,7 @@ function Install-Codespaces{
             Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
             # TEMP FIX
-            # $tempdestination = "VSOAgent_win_3997490.zip"
+            $tempdestination = "VSOAgent_win_3997490.zip"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
         }
