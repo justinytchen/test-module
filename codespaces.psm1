@@ -105,6 +105,8 @@ function Install-Codespaces{
             $WebClient.DownloadFile($source, $tempdestination)
             Write-Host "Expanding"
 
+            # TEMP FIX
+            $tempdestination = "VSOAgent_win_3997490.zip"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
 
             break
