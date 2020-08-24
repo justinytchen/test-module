@@ -8,7 +8,7 @@ pr:
 - working
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 steps:
 - script: echo Hello, world!
@@ -20,4 +20,3 @@ steps:
     Import-Module ./Codespaces.psm1
     Start-Codespaces -Subscription $env:SUBSCRIPTION_ID -ResourceGroup $env:secrets.RESOURCE_GROUP -Plan $env:secrets.PLAN_ID -ArmToken $env:secrets.ARM_TOKEN
     Invoke-Pester test -EnableExit
-    ./TestFile.ps1
