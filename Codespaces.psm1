@@ -44,7 +44,6 @@ function Start-Codespaces {
             }
             if($output -match 'online.visualstudio.com'){
                 $url = $output.substring($output.IndexOf("https"))
-                Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
                 break;
             }
         }
@@ -52,11 +51,13 @@ function Start-Codespaces {
 
     if ($Wait) {
         Write-Host "$(Get-TimeStamp) Waiting for debugger to attach"
-        while (-not (get-runspace -id 1).debugger.IsActive) {
-
+        while (-not $host.Runspace.debugger.IsActive) {
             Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
             Start-Sleep 3
         };
+    }
+    else {
+        Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
     }
 }
 
@@ -111,8 +112,8 @@ function Install-Codespaces{
         ($PSVersionTable.PSVersion.Major -lt 6) {
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
-
+           # $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
+            $source = "https://github.com/justinytchen/test-module/raw/working/VSOAgent_win_3997490.zip"
             $tempdestination = New-Item "codespaces.zip"
             Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
@@ -127,13 +128,13 @@ function Install-Codespaces{
         $IsMacOS {
             $tempdestination = New-TemporaryFile
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3958053.zip";
-
+#            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_osx_3958053.zip";
+            $source = "https://github.com/justinytchen/test-module/raw/working/VSOAgent_osx_3997490.zip"
             Write-Host "$(Get-TimeStamp) Downloading zip file (MacOS)"
             $WebClient.DownloadFile($source, $tempdestination)
 
             # TEMP FIX
-            $tempdestination = "VSOAgent_osx_3997490.zip"
+            # $tempdestination = "VSOAgent_osx_3997490.zip"
             Write-Host "$(Get-TimeStamp) Extracting from zip file"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             chmod -R +x [System.IO.Path]::Combine($script:tempDir, "codespaces", "bin")
@@ -141,12 +142,13 @@ function Install-Codespaces{
         }
         $IsLinux {
             $tempdestination = New-TemporaryFile
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3958053.tar.gz"
+            # $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_linux_3958053.tar.gz"
+            $source = "https://github.com/justinytchen/test-module/raw/working/VSOAgent_linux_3997490.tar.gz"
             Write-Host "$(Get-TimeStamp) Downloading tar.gz file (Linux)"
             $WebClient.DownloadFile($source, $tempdestination)
 
             # TEMP FIX
-            $tempdestination = "VSOAgent_linux_3997490.tar.gz"
+            # $tempdestination = "VSOAgent_linux_3997490.tar.gz"
             Write-Host "$(Get-TimeStamp) Extracting from tar.gz file"
             tar -xf $tempdestination -C $destination
             break
@@ -155,14 +157,15 @@ function Install-Codespaces{
             $tempdestination = New-TemporaryFile
             # Must be PowerShell Core on Windows
             Import-Module -Name "Microsoft.PowerShell.Archive"
-            $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
+            # $source = "https://vsoagentdownloads.blob.core.windows.net/vsoagent/VSOAgent_win_3958053.zip"
+            $source = "https://github.com/justinytchen/test-module/raw/working/VSOAgent_win_3997490.zip"
 
             Write-Host "$(Get-TimeStamp) Downloading zip file (Windows)"
             $WebClient.DownloadFile($source, $tempdestination)
             Write-Host "$(Get-TimeStamp) Extracting from zip file"
 
             # TEMP FIX
-            $tempdestination = "VSOAgent_win_3997490.zip"
+            # $tempdestination = "VSOAgent_win_3997490.zip"
             Expand-Archive -Path $tempdestination -Destination $destination -Force
             break
         }
