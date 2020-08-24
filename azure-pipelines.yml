@@ -5,19 +5,28 @@
 
 pr:
 - master
-- working
+
+strategy:
+  matrix:
+    windows:
+      imageName: 'windows-latest'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(imageName)
 
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
-- pwsh: |
+- powershell: |
     Install-Module Pester -Force -MaximumVersion 4.999.999
-- pwsh: |
+
+- powershell: |
     Write-Host $pid
     Import-Module ./Codespaces.psm1
-    Start-Codespaces -Subscription $env:SUBSCRIPTION_ID -ResourceGroup $env:secrets.RESOURCE_GROUP -Plan $env:secrets.PLAN_ID -ArmToken $env:secrets.ARM_TOKEN
+    Start-Codespaces -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm -Wait
     Invoke-Pester test -EnableExit
-    ./TestFile.ps1
+  env:
+    sub: $(SUBSCRIPTION_ID)
+    res: $(RESOURCE_GROUP)
+    plan: $(PLAN_ID)
+    arm: $(ARM_TOKEN)
