@@ -25,15 +25,15 @@ jobs:
     - name: agdf
       shell: pwsh
       run: |
-        Import-Module ./codespaces.psm1 -Force
-        Start-Codespaces -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -ResourceGroup '${{ secrets.RESOURCE_GROUP }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}' -Wait
-        Wait-Debugger
-        ./testFile.ps1
+        # Import-Module ./codespaces.psm1 -Force
+        # Start-Codespaces -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -ResourceGroup '${{ secrets.RESOURCE_GROUP }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}' -Wait
+        # Wait-Debugger
+        # ./testFile.ps1
     - name: Install Pester
-      shell: pwsh
+      shell: powershell
       run: Install-Module Pester -Force -MaximumVersion 4.999.999
     - name: Invoke Pester
-      shell: pwsh
+      shell: powershell
       run: Invoke-Pester test -EnableExit
     - uses: actions/upload-artifact@master
       with:
