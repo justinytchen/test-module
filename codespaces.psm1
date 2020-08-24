@@ -44,7 +44,6 @@ function Start-Codespaces {
             }
             if($output -match 'online.visualstudio.com'){
                 $url = $output.substring($output.IndexOf("https"))
-                Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
                 break;
             }
         }
@@ -56,6 +55,9 @@ function Start-Codespaces {
             Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
             Start-Sleep 3
         };
+    }
+    else {
+        Write-Host "$(Get-TimeStamp) pid: $pid, Connect: $url"
     }
 }
 
