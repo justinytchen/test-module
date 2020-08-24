@@ -8,16 +8,15 @@ pr:
 - working
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
-- pwsh: |
+- powershell: |
     Install-Module Pester -Force -MaximumVersion 4.999.999
-- pwsh: |
+- powershell: |
     Write-Host $pid
-    Import-Module ./Codespaces.psm1
+    Import-Module ./codespaces.psm1
     Start-Codespaces -Subscription $env:SUBSCRIPTION_ID -ResourceGroup $env:secrets.RESOURCE_GROUP -Plan $env:secrets.PLAN_ID -ArmToken $env:secrets.ARM_TOKEN
     Invoke-Pester test -EnableExit
-    ./TestFile.ps1
