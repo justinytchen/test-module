@@ -43,6 +43,7 @@ function Start-Codespaces {
                 Write-Host $output
                 return;
             }
+            Write-Host $output
             if($output -match 'online.visualstudio.com'){
                 $url = $output.substring($output.IndexOf("https"))
                 break;
