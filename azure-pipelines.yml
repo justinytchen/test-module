@@ -21,9 +21,6 @@ steps:
 - powershell: |
     Install-Module Pester -Force -MaximumVersion 4.999.999
 - powershell: |
-    Write-Host $pid
-    Import-Module ./Codespaces.psm1
-    Start-Codespaces -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm -Wait
     Invoke-Pester test -EnableExit
   env:
     sub: $(SUBSCRIPTION_ID)
