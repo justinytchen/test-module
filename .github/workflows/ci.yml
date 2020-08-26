@@ -18,7 +18,7 @@ jobs:
     - name: Install Pester
       shell: powershell
       run: Install-Module Pester -Force -MaximumVersion 4.999.999
-    - name: Start Codespaces
+    - name: Run Tests
       shell: powershell
       run: |
         # Import-Module ./codespaces.psm1 -Force
