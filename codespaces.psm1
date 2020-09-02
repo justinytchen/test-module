@@ -96,7 +96,9 @@ function Install-Codespaces{
         Write-Host "$(Get-TimeStamp) Ending vsls-agent that was still active from a previous session"
         $id = (Get-Process -Name "vsls-agent").Id
         Stop-Process -Id $id
-        Wait-Process -Id $id
+        if(Get-Process -Id $id){
+            Wait-Process -Id $id
+        }
         Start-Sleep 3
     }
 
