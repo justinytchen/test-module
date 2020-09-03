@@ -23,7 +23,7 @@ steps:
 - powershell: |
     Write-Host $pid
     Import-Module ./Codespaces.psm1
-    Start-Codespaces -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm -Wait
+    Start-Codespace -Subscription  $env:sub -ResourceGroup $env:res -Plan $env:plan -ArmToken $env:arm -Wait
     Invoke-Pester test -EnableExit
   env:
     sub: $(SUBSCRIPTION_ID)

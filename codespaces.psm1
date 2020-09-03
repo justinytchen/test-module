@@ -2,7 +2,7 @@ $script:tempDir = [System.IO.Path]::GetTempPath()
 $script:codespacesLoc = [System.IO.Path]::Combine($script:tempDir, "codespaces", "bin", "codespaces")
 $script:agentVersion = "3997869"
 
-function Start-Codespaces {
+function Start-Codespace {
     param(
         [Parameter(Position=0, Mandatory)]
         [string]$Subscription,
@@ -18,7 +18,7 @@ function Start-Codespaces {
     )
 
     Write-Host "$(Get-TimeStamp) Stop any active Codespaces instances"
-    Stop-Codespaces $ArmToken
+    Stop-Codespace $ArmToken
 
     Install-Codespaces $script:tempDir
 
@@ -63,7 +63,7 @@ function Start-Codespaces {
     }
 }
 
-function Stop-Codespaces{
+function Stop-Codespace{
     param(
         [Parameter(Position=0, Mandatory)]
         [string]$ArmToken
@@ -79,6 +79,17 @@ function Stop-Codespaces{
             Write-Host "$(Get-TimeStamp) Removed previously active Codespaces session."
         }
     }
+
+    if ($null -ne (Get-Process -Name "vsls-agent" -ea "SilentlyContinue")){
+        Write-Host "$(Get-TimeStamp) Ending vsls-agent that was still active from a previous session"
+        $id = (Get-Process -Name "vsls-agent").Id
+        Stop-Process -Id $id
+        $vslsProc = Get-Process -Id $id
+        if($vslsProc){
+            Wait-Process -Id $id
+        }
+        Start-Sleep 3
+    }
 }
 
 function Install-Codespaces{
@@ -91,16 +102,6 @@ function Install-Codespaces{
     Set-StrictMode -Version Latest
     $ErrorActionPreference = "Stop"
     $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
-
-    if ($null -ne (Get-Process -Name "vsls-agent" -ea "SilentlyContinue")){
-        Write-Host "$(Get-TimeStamp) Ending vsls-agent that was still active from a previous session"
-        $id = (Get-Process -Name "vsls-agent").Id
-        Stop-Process -Id $id
-        if(Get-Process -Id $id){
-            Wait-Process -Id $id
-        }
-        Start-Sleep 3
-    }
 
     if(Test-Path (Join-Path $BinParentDir "codespaces")){
         Write-Host "$(Get-TimeStamp) Codespaces folder already exists at $BinParentDir. Deleting and reinstalling."

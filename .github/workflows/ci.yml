@@ -17,11 +17,11 @@ jobs:
     - name: Install Pester
       shell: powershell
       run: Install-Module Pester -Force -MaximumVersion 4.999.999
-    - name: Start Codespaces
+    - name: Start Codespace
       shell: powershell
       run: |
         Import-Module ./codespaces.psm1 -Force
-        Start-Codespaces -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -ResourceGroup '${{ secrets.RESOURCE_GROUP }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}' -Wait
+        Start-Codespace -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -ResourceGroup '${{ secrets.RESOURCE_GROUP }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}' -Wait
         Wait-Debugger
         Invoke-Pester test -EnableExit
     - uses: actions/upload-artifact@master
