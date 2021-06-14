@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-  pull_request:
 
 jobs:
   lint:
@@ -18,16 +17,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [windows-latest]
+        # os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v1
     - name: Install Pester
-      shell: pwsh
+      shell: powershell
       run: Install-Module Pester -Force -MaximumVersion 4.999.999
     - name: Invoke Pester
-      shell: pwsh
-      run: Invoke-Pester test -EnableExit
+      shell: powershell
+      run: |
+        Write-Host $pid
+        Import-Module ./Codespaces.psm1
+        Start-Codespaces -Subscription '${{ secrets.SUBSCRIPTION_ID }}' -Plan '${{ secrets.PLAN_ID }}' -ArmToken '${{ secrets.ARM_TOKEN }}'
+        Invoke-Pester test -EnableExit
+        ./TestFile.ps1
     - uses: actions/upload-artifact@master
       with:
         name: test-module
